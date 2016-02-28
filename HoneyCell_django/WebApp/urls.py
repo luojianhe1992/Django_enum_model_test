@@ -39,4 +39,9 @@ urlpatterns = [
     # go to analytics page
     url(r'analytics/$', 'WebApp.views.analytics', name='analytics'),
 
+    url(r'add_car/$', 'WebApp.views.add_car', name='add_car'),
+
+    url(r'show_cars/$', 'WebApp.views.show_cars', name='show_cars'),
+
+
 ]

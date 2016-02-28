@@ -130,3 +130,90 @@ def analytics(request):
     user = request.user
     context['user'] = user
     return render(request, 'WebApp/analytics.html', context)
+
+
+from WebApp.forms import *
+
+@login_required
+def add_car(request):
+    print("in the add_car function.")
+
+    context = {}
+    context['user'] = request.user
+
+    errors = []
+    context['errors'] = errors
+
+    if request.method == "GET":
+        print("in the GET method of add_car function.")
+
+        form = CarModelForm()
+        context['form'] =  form
+
+        return render(request, 'WebApp/add_car.html', context)
+
+    else:
+        print("in the POST method of add_car function.")
+
+        form = CarModelForm(request.POST, request.FILES)
+        context['form'] = form
+
+        print("%" * 30)
+        # print(form)
+        print("%" * 30)
+
+        if not form.is_valid():
+            print("The form is not valid.")
+            errors.append("The form is not valid.")
+
+            return render(request, 'WebApp/add_car.html', context)
+        print("The form is valid.")
+
+        car_owner = form.cleaned_data.get('car_owner')
+        car_name = form.cleaned_data.get('car_name')
+        car_color = form.cleaned_data.get('car_color')
+        car_size = form.cleaned_data.get('car_size')
+
+        print("%" * 30)
+        print(car_owner)
+        print(car_name)
+        print(car_color)
+        print(car_size)
+        print("%" * 30)
+
+        if len(Car.objects.filter(car_name=car_name)):
+            print("The car_name already exist.")
+            errors.append("The car_name already exist.")
+
+            return render(request, 'WebApp/add_car.html', context)
+
+        form.save()
+        print("Already save the form.")
+
+        return render(request, 'WebApp/add_car.html', {'user': request.user, 'form': CarModelForm()})
+
+
+@login_required
+def show_cars(request):
+    print("in the show_cars function.")
+
+    context = {}
+    context['user'] = request.user
+
+    cars = Car.objects.all()
+    context['cars'] = cars
+
+    for car in cars:
+        print("%" * 60)
+        print(car.car_owner)
+        print(car.car_name)
+        print(car.car_color)
+        print(car.car_size)
+        print(car.car_time_created)
+        print(car.car_time_changed)
+        print("%" * 60)
+
+        print('\n')
+
+
+    return render(request, 'WebApp/show_cars.html', context)
